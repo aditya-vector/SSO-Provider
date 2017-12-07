@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+
+<html>
+  <head>
+    <title>SSLSignature - JWT Creator</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="ssls.accountId" content="5995a3c9-678b-4338-a674-362af68b9ef9" />
+    <meta name="ssls.validate" content="true" />
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+
+    <!-- CTA -->
+    <div id="cta" class="container">
+      <div class="text-center pad-top ">
+        <h2>JWT creator </h2>
+        <p>Set the fields, issue a new token, store in browser</hp>
+      </div>
+      <div class="text-center pad-top" id="login-content">
+      </div>
+      <div id="logoutLink" class="text-center pad-top hide">
+        <a href="javascript:void(0)" onclick="sslssso.logout()">Log Out</a>
+      </div>
+    </div>
+
+    <form id="userLogin" class="form-horizontal">
+      <div class="form-group">
+        <label for="userEmail" class="col-sm-2 control-label">Email</label>
+        <div class="col-sm-8">
+          <input type="email" class="form-control" id="userEmail" placeholder="Password">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="userPassword" class="col-sm-2 control-label">Password</label>
+        <div class="col-sm-8">
+          <input type="password" class="form-control" id="userPassword" placeholder="Password">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-default">Submit</button>
+        <div class="col-sm-offset-2 col-sm-10">
+      </div>
+    </form>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="../resources/js/sslssso.js"></script>
+
+
+    <script>
+
+      //URL of server
+      var issueTokenUrl = 'http://localhost:3000/authenticate';
+
+      //1) Sends an AJAX POST request to  the sample server in /sso/jwt with the required fields
+      //2) The server returns a new JWT with sent info which is signed with server  key (hmac)
+      //3) The JWT is stored in browser usign sslsso.login(jwt)
+      //4) An sslssso.onIdentification event is fired to all listeners
+      //
+      // Issue JWT after a successful user authentication in your own login form (on server side)
+      // (function handleCreateJWTClick() {
+
+      //   var params = {
+      //     email: 'lorem@example.com',
+      //     password: 'lorem123'
+      //   };
+      //   console.log("POST "+issueTokenUrl);
+      //   console.log(params);
+      //   $.post(
+      //       issueTokenUrl,
+      //       params,
+      //       function(jwt) {
+      //         console.log("JWT: "+jwt.auth_token);
+      //         // Store JWT in browser SSO
+      //         sslssso.login(jwt.auth_token);
+      //       }
+      //   )
+      // })();
+
+      $('#userLogin').submit(function(event) {
+        params = {
+          email: $('#userEmail').val(),
+          password: $('#userPassword').val()
+        };
+        console.log("POST "+issueTokenUrl);
+        console.log(params);
+        $.post(
+            issueTokenUrl,
+            params,
+            function(jwt) {
+              console.log("JWT: "+jwt.auth_token);
+              // Store JWT in browser SSO
+              sslssso.login(jwt.auth_token);
+              $('#userLogin').hide();
+              $('#login-content').html('Welcome!');
+            }
+        );
+        event.preventDefault();
+      });
+
+      function onLogout() {
+        $('#userLogin').show();
+        $('#logoutLink').addClass('hide');
+      }
+
+      function onIdentification() {
+        $('#userLogin').hide();
+        $('#logoutLink').removeClass('hide');
+      }
+
+    </script>
+  </body>
+</html>
